@@ -1,34 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:introapp/data/questions.dart';
 
 void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      backgroundColor: const Color.fromARGB(255, 70, 4, 105),
+  runApp(const MaterialApp(home: QuestionScreen()));
+}
+
+// Stateless => Ekranda değişime uğramayacak, UI widget
+// CTRL + .
+class StartScreen extends StatelessWidget {
+  const StartScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.deepPurpleAccent,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/2120418120210530115238453.jpg',
-              height: 150.0,
-              fit: BoxFit.cover,
-            ),
+            Image.asset("assets/images/quiz-logo.png", width: 250),
             const Text(
-              'Onur Erdem',
-              style: TextStyle(fontSize: 40, color: Colors.white),
+              "Quiz App",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold),
             ),
-            const Text(
-              'Mobil Geliştirici (Flutter) - 1A',
-              style: TextStyle(fontSize: 25, color: Colors.white),
-            ),
-            const Text(
-              '31.10.2023',
-              style: TextStyle(fontSize: 20, color: Colors.white),
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.arrow_right_alt),
+              label: const Text("Start"),
+              style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(40, 20, 40, 20)),
             ),
           ],
         ),
       ),
-    ),
-  ));
+    );
+  }
 }
-// const
+
+// Boilerplate
+
+class QuestionScreen extends StatefulWidget {
+  const QuestionScreen({Key? key}) : super(key: key);
+
+  @override
+  _QuestionState createState() => _QuestionState();
+}
+
+class _QuestionState extends State<QuestionScreen> {
+  int i = 0;
+  String question = questions[0].question;
+  List<String> answers = [
+    questions[0].answers[0],
+    questions[0].answers[1],
+    questions[0].answers[2],
+    questions[0].answers[3]
+  ];
+
+  void changeQuestion() {
+    setState(() {
+      if (i < 9) {
+        i++;
+        question = questions[i].question;
+        answers = [
+          questions[i].answers[0],
+          questions[i].answers[1],
+          questions[i].answers[2],
+          questions[i].answers[3]
+        ];
+      } else {
+        i = -1;
+        question = "Tebrikler!";
+        answers = ["Tekrar başla."];
+      }
+    }); // değişikliklerin ekrana da yansıtılması için gerekli..
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(question),
+          ...answers.map((answer) {
+            return ElevatedButton(
+                onPressed: changeQuestion,
+                child: Text(
+                  answer,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white),
+                ));
+          })
+        ]),
+      ),
+    );
+  }
+}
