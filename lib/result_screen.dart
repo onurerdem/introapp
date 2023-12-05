@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:introapp/question_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({super.key});
+  final int correctAnswers;
+
+  const ResultScreen({Key? key, required this.correctAnswers})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurpleAccent,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/quiz-logo.png", width: 250),
-            const Text(
-              "Result Screen",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold),
+            Text(
+              "Tebrikler, $correctAnswers doğru cevapladınız!",
+              style: TextStyle(fontSize: 16),
             ),
-            OutlinedButton.icon(
+            ElevatedButton.icon(
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const QuestionScreen(),
-                    ));
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               icon: const Icon(Icons.arrow_right_alt),
-              label: const Text("Restart"),
+              label: const Text(
+                "Yeniden Başla",
+                style: TextStyle(fontSize: 20),
+              ),
               style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(40, 20, 40, 20)),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 20),
+              ),
             ),
           ],
         ),

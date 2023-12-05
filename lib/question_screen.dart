@@ -3,69 +3,61 @@ import 'package:introapp/data/questions.dart';
 import 'package:introapp/result_screen.dart';
 
 class QuestionScreen extends StatefulWidget {
-  const QuestionScreen({Key? key}) : super(key: key);
+  // required = constructorda ilgili named argument'in verilmeden ilgili classın construct edilmemesini sağlar.
+  // eğer named argument değilse zaten zorunludur
+  const QuestionScreen({Key? key, required this.onChooseAnswer})
+      : super(key: key);
+  final void Function(String answer) onChooseAnswer;
 
   @override
   _QuestionState createState() => _QuestionState();
 }
 
 class _QuestionState extends State<QuestionScreen> {
-  int i = 0;
-  String question = questions[0].question;
-  List<String> answers = [
-    questions[0].answers[0],
-    questions[0].answers[1],
-    questions[0].answers[2],
-    questions[0].answers[3]
-  ];
+  int currentQuestionIndex = 0; // O an kaçıncı soruda olduğumu
 
-  void changeQuestion() {
+  void changeQuestion(String answer) {
     setState(() {
-      if (i < 9) {
-        i++;
-        question = questions[i].question;
-        answers = [
-          questions[i].answers[0],
-          questions[i].answers[1],
-          questions[i].answers[2],
-          questions[i].answers[3]
-        ];
-      } else if (i == 9) {
-        i++;
-        question = "Tebrikler!";
-        answers = ["Sonuçları göster."];
-      } else {
-        i = -1;
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ResultScreen(),
-            ));
-      }
+      widget.onChooseAnswer(answer);
+      if (questions.length - 1 > currentQuestionIndex) currentQuestionIndex++;
+       else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultScreen(correctAnswers: currentQuestionIndex),
+        ),
+      );
+    }
     }); // değişikliklerin ekrana da yansıtılması için gerekli..
+    // setState => build fonkisyonunu yeniden çalıştırır.
   }
 
+  // Spread Operator
   @override
   Widget build(BuildContext context) {
+    final currentQuestion = questions[
+        currentQuestionIndex]; // Liste içerisinden o an kaçıncı soruda isek
+    // o indexdeki veriyi al.
+
     return Scaffold(
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
-              margin: const EdgeInsets.all(40),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(question),
-                    ...answers.map((answer) {
-                      return ElevatedButton(
-                          onPressed: changeQuestion,
-                          child: Text(
-                            answer,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white),
-                          ));
-                    })
-                  ]))
+            margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(currentQuestion.question),
+                ...currentQuestion.answers.map((answer) {
+                  return ElevatedButton(
+                      child: Text(answer),
+                      onPressed: () {
+                        changeQuestion(answer);
+                      });
+                })
+              ],
+            ),
+          )
         ]),
       ),
     );
